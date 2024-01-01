@@ -1,3 +1,5 @@
+use core::mem::MaybeUninit;
+
 use crate::base::*;
 use crate::isr::*;
 use crate::prelude::v1::*;
@@ -87,14 +89,14 @@ impl<T: Sized + Copy> Queue<T> {
     /// Wait for an item to be available on the queue.
     pub fn receive<D: DurationTicks>(&self, max_wait: D) -> Result<T, FreeRtosError> {
         unsafe {
-            let mut buff = mem::zeroed::<T>();
+            let mut buff = MaybeUninit::uninit();
             let r = freertos_rs_queue_receive(
                 self.queue,
                 &mut buff as *mut _ as FreeRtosMutVoidPtr,
                 max_wait.to_ticks(),
             );
             if r == 0 {
-                return Ok(buff);
+                return Ok(buff.assume_init());
             } else {
                 return Err(FreeRtosError::QueueReceiveTimeout);
             }
