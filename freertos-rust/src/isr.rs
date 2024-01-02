@@ -24,7 +24,7 @@ impl InterruptContext {
 
 impl Drop for InterruptContext {
     fn drop(&mut self) {
-        if self.x_higher_priority_task_woken == 1 {
+        if unsafe { self.get_task_field_mut().read_volatile() } != 0 {
             unsafe {
                 freertos_rs_isr_yield();
             }
