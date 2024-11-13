@@ -109,9 +109,11 @@ TickType_t freertos_rs_xTaskGetTickCount() {
 	return xTaskGetTickCount();
 }
 
+#if (configUSE_TRACE_FACILITY == 1)
 UBaseType_t freertos_rs_get_system_state(TaskStatus_t * const pxTaskStatusArray, const UBaseType_t uxArraySize, uint32_t * const pulTotalRunTime) {
 	return uxTaskGetSystemState(pxTaskStatusArray, uxArraySize, pulTotalRunTime);
 }
+#endif
 
 #ifdef configCPU_CLOCK_HZ
 unsigned long freertos_rs_get_configCPU_CLOCK_HZ() {
@@ -232,6 +234,7 @@ UBaseType_t freertos_rs_get_stack_high_water_mark(TaskHandle_t task) {
 #if (INCLUDE_uxTaskGetStackHighWaterMark == 1)
 	return uxTaskGetStackHighWaterMark(task);
 #else
+	(void)task;
 	return 0;
 #endif
 }
@@ -274,8 +277,8 @@ UBaseType_t freertos_rs_queue_messages_waiting(QueueHandle_t queue) {
 	return uxQueueMessagesWaiting( queue );
 }
 
-void freertos_rs_isr_yield() {
-	portYIELD();
+void freertos_rs_isr_yield(BaseType_t xHigherPriorityTaskWoken) {
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 TickType_t freertos_rs_max_wait() {

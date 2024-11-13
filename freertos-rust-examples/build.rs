@@ -41,7 +41,8 @@ fn main() {
         copy(
             "examples/stm32-cortex-m3/memory.x",
             PathBuf::from(out_dir.as_str()).join("memory.x"),
-        ).unwrap();
+        )
+        .unwrap();
     }
     if target == "thumbv7em-none-eabihf" {
         b.freertos_config("examples/stm32-cortex-m4-blackpill");
@@ -56,22 +57,25 @@ fn main() {
         copy(
             "examples/nrf9160/memory.x",
             PathBuf::from(out_dir.as_str()).join("memory.x"),
-        ).unwrap();
+        )
+        .unwrap();
     }
 
-    b.compile().unwrap_or_else(|e| { panic!(e.to_string()) });
+    b.compile().unwrap_or_else(|e| panic!("{}", e));
 }
 
-/// Print relevant environment variables
+/// Print relevant environment variables.
+/// To avoid cluttering the output on each build, this is not displayed in the terminal.
+/// See the output in the corresponding target output file e.g. target/debug/build/<pkg>/output
 fn print_env() {
     let env_keys = ["TARGET", "OUT_DIR", "HOST"];
     env::vars().for_each(|(key, val)| {
         if key.starts_with("CARGO") {
-            println!("cargo:warning={}={}", key, val);
+            println!("{}={}", key, val);
         } else if env_keys.contains(&key.as_str()) {
-            println!("cargo:warning={}={}", key, val);
+            println!("{}={}", key, val);
         } else {
-            // println!("cargo:warning={}={}", key, val);
+            // println!("{}={}", key, val);
         }
     });
 }
