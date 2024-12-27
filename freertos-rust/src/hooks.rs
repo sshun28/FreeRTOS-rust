@@ -21,7 +21,7 @@ impl FreeRtosHooks {
 // TODO: It's unsafe to use, we should build some safe wrapper around
 pub static mut FREERTOS_HOOKS: FreeRtosHooks = FreeRtosHooks { on_assert: || {} };
 
-#[allow(unused_doc_comments)]
+#[allow(unused_doc_comments, static_mut_refs)]
 #[no_mangle]
 pub extern "C" fn vAssertCalled(file_name_ptr: FreeRtosCharPtr, line: FreeRtosUBaseType) {
     let file_name: String;
